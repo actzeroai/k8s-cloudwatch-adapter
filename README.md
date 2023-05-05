@@ -8,10 +8,7 @@ layers](https://shields.beevelop.com/docker/image/layers/chankh/k8s-cloudwatch-a
 [![image
 pulls](https://shields.beevelop.com/docker/pulls/chankh/k8s-cloudwatch-adapter.svg)](https://hub.docker.com/r/chankh/k8s-cloudwatch-adapter)
 
-> Attention! This project has been archived and is no longer being worked on. If you are looking for a metrics server that can consume metrics from CloudWatch, please consider using the [KEDA](https://keda.sh) project instead. KEDA is a Kubernetes-based Event Driven Autoscaler. With KEDA, you can drive the scaling of any container in Kubernetes based on the number of events needing to be processed. For an overview of KEDA, see [An overview of Kubernetes Event-Driven Autoscaling](https://youtu.be/H5eZEq_wqSE).
-
 # Kubernetes Custom Metrics Adapter for Kubernetes
-
 
 An implementation of the Kubernetes [Custom Metrics API and External Metrics
 API](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#support-for-metrics-apis)
@@ -72,16 +69,16 @@ Role Binding, along with the deployment of the adapter.
 Alternatively the crd and adapter can be deployed using the Helm chart in the `/charts` directory:
 
 ```bash
-$ helm install k8s-cloudwatch-adapter-crd ./charts/k8s-cloudwatch-adapter-crd
+$ helm install k8s-cloudwatch-adapter-crd ./charts/k8s-cloudwatch-adapter-crd \
+>   --namespace custom-metrics \
+>   --create-namespace
 NAME: k8s-cloudwatch-adapter-crd
 LAST DEPLOYED: Thu Sep 17 11:36:53 2020
 NAMESPACE: default
 STATUS: deployed
 REVISION: 1
 TEST SUITE: None
-$ helm install k8s-cloudwatch-adapter ./charts/k8s-cloudwatch-adapter \
->   --namespace custom-metrics \
->   --create-namespace
+$ helm install k8s-cloudwatch-adapter ./charts/k8s-cloudwatch-adapter --namespace custom-metrics
 NAME: k8s-cloudwatch-adapter
 LAST DEPLOYED: Fri Aug 14 13:20:17 2020
 NAMESPACE: custom-metrics
