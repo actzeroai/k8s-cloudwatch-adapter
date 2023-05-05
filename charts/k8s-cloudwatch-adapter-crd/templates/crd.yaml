@@ -1,4 +1,4 @@
-apiVersion: apiextensions.k8s.io/v1beta1
+apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   name: externalmetrics.metrics.aws
@@ -6,7 +6,73 @@ metadata:
     {{- include "k8s-cloudwatch-adapter-crd.labels" . | nindent 4 }}
 spec:
   group: metrics.aws
-  version: v1alpha1
+  versions:
+    - name: v1alpha1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              required:
+                - name
+                - queries
+              properties:
+                name:
+                  type: string
+                roleArn:
+                  type: string
+                region:
+                  type: string
+                queries:
+                  type: array
+                  items:
+                    type: object
+                    oneOf:
+                      - required: [ "expression" ]
+                      - required: [ "metricStat" ]
+                    required:
+                      - id
+                    properties:
+                      id:
+                        type: string
+                        # validate: letters, numbers, and underscore. 1st char must be a lowercase letter.
+                      label:
+                        type: string
+                      returnData:
+                        type: boolean
+                      expression:
+                        type: string
+                      metricStat:
+                        type: object
+                        properties:
+                          unit:
+                            type: string
+                          stat:
+                            type: string
+                          period:
+                            type: integer
+                          metric:
+                            type: object
+                            properties:
+                              metricName:
+                                type: string
+                              namespace:
+                                type: string
+                              dimensions:
+                                type: array
+                                items:
+                                  type: object
+                                  required:
+                                    - name
+                                    - value
+                                  properties:
+                                    name:
+                                      type: string
+                                    value:
+                                      type: string
   names:
     kind: ExternalMetric
     plural: externalmetrics
