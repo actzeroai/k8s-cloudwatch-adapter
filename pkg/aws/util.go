@@ -11,12 +11,54 @@ import (
 	"k8s.io/klog"
 )
 
+func GetIMDSv2Token() (string, error) {
+    tokenURL := "http://169.254.169.254/latest/api/token"
+    req, err := http.NewRequest("PUT", tokenURL, nil)
+    if err != nil {
+        return "", err
+    }
+
+    req.Header.Set("X-aws-ec2-metadata-token-ttl-seconds", "60")
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    if err != nil {
+        return "", nil
+    }
+
+    defer resp.Body.Close()
+    token, err := ioutil.ReadAll(resp.Body)
+    if err != nil {
+        return "", err
+    }
+
+    return string(token), nil
+}
+
 // GetLocalRegion gets the region ID from the instance metadata.
 func GetLocalRegion() string {
-	resp, err := http.Get("http://169.254.169.254/latest/meta-data/placement/availability-zone/")
+    metadataURL := "http://169.254.169.254/latest/meta-data/placement/availability-zone/"
+	resp, err := http.Get(metadataURL)
 	if err != nil {
 		klog.Errorf("unable to get current region information, %v", err)
 		return ""
+	}
+	if resp.StatusCode == 401 {
+	    klog.Info("Token required to obtain instance metadata. Trying that method.")
+	    token, err := GetIMDSv2Token()
+	    if err != nil {
+	        klog.Fatalf("Unable to get metadata v2 token, %v", err)
+	    }
+
+	    req, err := http.NewRequest("GET", metadataURL, nil)
+	    if err != nil {
+	        klog.Errorf("Unable to get metadata v2 token, %v", err)
+	    }
+        req.Header.Set("X-aws-ec2-metadata-token", token)
+        client := &http.Client{}
+        resp, err = client.Do(req)
+        if err != nil {
+	        klog.Errorf("Unable to get metadata v2 token, %v", err)
+	    }
 	}
 
 	defer resp.Body.Close()
