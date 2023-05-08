@@ -1,18 +1,13 @@
-FROM golang:1.11.4-alpine3.8 as builder
+FROM python:3.11-slim-bullseye
 
-WORKDIR /go/src/consumer
-COPY main.go .
+WORKDIR /usr/src/app
 
-RUN apk add -U git
-RUN go get ./...
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-RUN CGO_ENABLED=0 go build -a -tags netgo -o /consumer 
+RUN pip install --upgrade pip
+RUN pip install boto3~=1.26
 
-FROM alpine:3.8
-RUN apk update \
-    && apk add ca-certificates \
-    && rm -rf /var/cache/apk/* \
-    && update-ca-certificates
-    
-COPY --from=builder /consumer /
-ENTRYPOINT ["/consumer"]
+COPY consumer.py .
+
+ENTRYPOINT ["python", "consumer.py"]

@@ -1,3 +1,9 @@
 vendor/
 _output/
 adapter
+
+.venv/
+
+# IDE Stuff
+.idea/
+.code/

@@ -2,8 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: sqs-consumer
-  annotations:
-    iam.amazonaws.com/role: k8s-pod-sqs-consume
 spec:
   selector:
     matchLabels:
@@ -13,6 +11,13 @@ spec:
       labels:
         app: sqs-consumer
     spec:
+      serviceAccountName: sqstest
       containers:
       - name: sqs-consumer
-        image: chankh/sqs-consumer-sample
+        image: ghcr.io/seancallaway/k8s-cloudwatch-adapter:sqs-consumer-sample
+        imagePullPolicy: Always
+        env:
+          - name: QUEUE_NAME
+            value: ""
+          - name: AWS_REGION
+            value: ""

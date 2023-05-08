@@ -12,7 +12,7 @@ spec:
           metricName: "ApproximateNumberOfMessagesVisible"
           dimensions:
             - name: QueueName
-              value: "helloworld"
+              value: ""
         period: 60
         stat: Average
         unit: Count

@@ -8,10 +8,7 @@ layers](https://shields.beevelop.com/docker/image/layers/chankh/k8s-cloudwatch-a
 [![image
 pulls](https://shields.beevelop.com/docker/pulls/chankh/k8s-cloudwatch-adapter.svg)](https://hub.docker.com/r/chankh/k8s-cloudwatch-adapter)
 
-> Attention! This project has been archived and is no longer being worked on. If you are looking for a metrics server that can consume metrics from CloudWatch, please consider using the [KEDA](https://keda.sh) project instead. KEDA is a Kubernetes-based Event Driven Autoscaler. With KEDA, you can drive the scaling of any container in Kubernetes based on the number of events needing to be processed. For an overview of KEDA, see [An overview of Kubernetes Event-Driven Autoscaling](https://youtu.be/H5eZEq_wqSE).
-
 # Kubernetes Custom Metrics Adapter for Kubernetes
-
 
 An implementation of the Kubernetes [Custom Metrics API and External Metrics
 API](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#support-for-metrics-apis)
@@ -22,11 +19,10 @@ Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-auto
 metrics from AWS CloudWatch.
 
 ## Prerequisites
-This adapter requires the following permissions to access metric data from Amazon CloudWatch.
-- cloudwatch:GetMetricData
+This adapter requires your node groups to have the following permissions to access metric data from Amazon CloudWatch.
+- `cloudwatch:GetMetricData`
 
-You can create an IAM policy using this template, and attach it to the [Service Account Role](https://docs.aws.amazon.com/eks/latest/userguide/specify-service-account-role.html) if you are using
-[IAM Roles for Service Accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html).
+You can create an IAM policy using this template, and attach it to your node group role.
 
 ```json
 {
@@ -44,46 +40,25 @@ You can create an IAM policy using this template, and attach it to the [Service 
 ```
 
 ## Deploy
-Requires a Kubernetes cluster with Metric Server deployed, Amazon EKS cluster is fine too.
+Requires a Kubernetes cluster with 
+[Metric Server deployed](https://docs.aws.amazon.com/eks/latest/userguide/metrics-server.html).
 
-Now deploy the adapter to your Kubernetes cluster:
-
-```bash
-$ kubectl apply -f https://raw.githubusercontent.com/awslabs/k8s-cloudwatch-adapter/master/deploy/adapter.yaml
-namespace/custom-metrics created
-clusterrolebinding.rbac.authorization.k8s.io/k8s-cloudwatch-adapter:system:auth-delegator created
-rolebinding.rbac.authorization.k8s.io/k8s-cloudwatch-adapter-auth-reader created
-deployment.apps/k8s-cloudwatch-adapter created
-clusterrolebinding.rbac.authorization.k8s.io/k8s-cloudwatch-adapter-resource-reader created
-serviceaccount/k8s-cloudwatch-adapter created
-service/k8s-cloudwatch-adapter created
-apiservice.apiregistration.k8s.io/v1beta1.external.metrics.k8s.io created
-clusterrole.rbac.authorization.k8s.io/k8s-cloudwatch-adapter:external-metrics-reader created
-clusterrole.rbac.authorization.k8s.io/k8s-cloudwatch-adapter-resource-reader created
-clusterrolebinding.rbac.authorization.k8s.io/k8s-cloudwatch-adapter:external-metrics-reader created
-customresourcedefinition.apiextensions.k8s.io/externalmetrics.metrics.aws created
-clusterrole.rbac.authorization.k8s.io/k8s-cloudwatch-adapter:crd-metrics-reader created
-clusterrolebinding.rbac.authorization.k8s.io/k8s-cloudwatch-adapter:crd-metrics-reader created
-```
-
-This creates a new namespace `custom-metrics` and deploys the necessary ClusterRole, Service Account,
-Role Binding, along with the deployment of the adapter.
-
-Alternatively the crd and adapter can be deployed using the Helm chart in the `/charts` directory:
+Now, deploy the [CRD](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) and adapter
+using the Helm charts in the `/charts` directory:
 
 ```bash
-$ helm install k8s-cloudwatch-adapter-crd ./charts/k8s-cloudwatch-adapter-crd
+$ helm install k8s-cloudwatch-adapter-crd ./charts/k8s-cloudwatch-adapter-crd \
+>   --namespace custom-metrics \
+>   --create-namespace
 NAME: k8s-cloudwatch-adapter-crd
-LAST DEPLOYED: Thu Sep 17 11:36:53 2020
+LAST DEPLOYED: Mon May 8 11:36:53 2023
 NAMESPACE: default
 STATUS: deployed
 REVISION: 1
 TEST SUITE: None
-$ helm install k8s-cloudwatch-adapter ./charts/k8s-cloudwatch-adapter \
->   --namespace custom-metrics \
->   --create-namespace
+$ helm install k8s-cloudwatch-adapter ./charts/k8s-cloudwatch-adapter --namespace custom-metrics
 NAME: k8s-cloudwatch-adapter
-LAST DEPLOYED: Fri Aug 14 13:20:17 2020
+LAST DEPLOYED: Mon May 8 13:20:17 2023
 NAMESPACE: custom-metrics
 STATUS: deployed
 REVISION: 1
