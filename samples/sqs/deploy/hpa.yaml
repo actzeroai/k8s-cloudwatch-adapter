@@ -1,10 +1,10 @@
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
-apiVersion: autoscaling/v2beta1
 metadata:
   name: sqs-consumer-scaler
 spec:
   scaleTargetRef:
-    apiVersion: apps/v1beta1
+    apiVersion: apps/v1
     kind: Deployment
     name: sqs-consumer
   minReplicas: 1
@@ -12,5 +12,8 @@ spec:
   metrics:
   - type: External
     external:
-      metricName: sqs-helloworld-length
-      targetAverageValue: 30
+      metric:
+        name: sqs-helloworld-length
+      target:
+        type: AverageValue
+        averageValue: 30
