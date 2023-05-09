@@ -96,4 +96,6 @@ This library is licensed under the Apache 2.0 License. [Contributions](CONTRIBUT
 
 ## Issues
 
-Report any issues in the [Github Issues](https://github.com/actzeroai/k8s-cloudwatch-adapter/issues)
+Report any non-security issues in the [Github Issue Tracker](https://github.com/actzeroai/k8s-cloudwatch-adapter/issues). 
+
+Please see [CONTRIBUTING.md](CONTRIBUTING.md#security-issue-notifications) for information on reporting security issues.
