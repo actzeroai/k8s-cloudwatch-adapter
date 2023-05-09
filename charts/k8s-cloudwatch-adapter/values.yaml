@@ -1,7 +1,7 @@
 image:
   pullPolicy: IfNotPresent
-  repository: ghcr.io/seancallaway/k8s-cloudwatch-adapter
-  tag: "latest"
+  repository: ghcr.io/actzeroai/k8s-cloudwatch-adapter
+  tag: "v0.11.0"
 
 ## Optional array of imagePullSecrets containing private registry credentials
 ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
