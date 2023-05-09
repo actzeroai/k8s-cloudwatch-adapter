@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/awslabs/k8s-cloudwatch-adapter.svg?branch=master)](https://travis-ci.org/awslabs/k8s-cloudwatch-adapter)
+<!--[![Build Status](https://travis-ci.org/awslabs/k8s-cloudwatch-adapter.svg?branch=master)](https://travis-ci.org/awslabs/k8s-cloudwatch-adapter)-->
 [![GitHub
 release](https://img.shields.io/github/release/actzeroai/k8s-cloudwatch-adapter/all.svg)](https://github.com/actzeroai/k8s-cloudwatch-adapter/releases)
 [![GitHub issues](https://img.shields.io/github/issues/actzeroai/k8s-cloudwatch-adapter)](https://github.com/actzeroai/k8s-cloudwatch-adapter/issues)
