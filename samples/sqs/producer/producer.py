@@ -41,7 +41,7 @@ def main():
         print('Could not determine region.')
         return 1
 
-    for num in range(20000):
+    for num in range(10000):
         sqs.send_message(
             QueueUrl=queue_url,
             MessageBody=f'Sending message {num}'

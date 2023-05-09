@@ -1,12 +1,8 @@
-[![Build Status](https://travis-ci.org/awslabs/k8s-cloudwatch-adapter.svg?branch=master)](https://travis-ci.org/awslabs/k8s-cloudwatch-adapter)
+<!--[![Build Status](https://travis-ci.org/awslabs/k8s-cloudwatch-adapter.svg?branch=master)](https://travis-ci.org/awslabs/k8s-cloudwatch-adapter)-->
 [![GitHub
-release](https://img.shields.io/github/release/awslabs/k8s-cloudwatch-adapter/all.svg)](https://github.com/awslabs/k8s-cloudwatch-adapter/releases)
-[![docker image
-size](https://shields.beevelop.com/docker/image/image-size/chankh/k8s-cloudwatch-adapter/latest.svg)](https://hub.docker.com/r/chankh/k8s-cloudwatch-adapter)
-[![image
-layers](https://shields.beevelop.com/docker/image/layers/chankh/k8s-cloudwatch-adapter/latest.svg)](https://hub.docker.com/r/chankh/k8s-cloudwatch-adapter)
-[![image
-pulls](https://shields.beevelop.com/docker/pulls/chankh/k8s-cloudwatch-adapter.svg)](https://hub.docker.com/r/chankh/k8s-cloudwatch-adapter)
+release](https://img.shields.io/github/release/actzeroai/k8s-cloudwatch-adapter/all.svg)](https://github.com/actzeroai/k8s-cloudwatch-adapter/releases)
+[![GitHub issues](https://img.shields.io/github/issues/actzeroai/k8s-cloudwatch-adapter)](https://github.com/actzeroai/k8s-cloudwatch-adapter/issues)
+[![GitHub PRs](https://img.shields.io/github/issues-pr/actzeroai/k8s-cloudwatch-adapter)](https://github.com/actzeroai/k8s-cloudwatch-adapter/pulls)
 
 # Kubernetes Custom Metrics Adapter for Kubernetes
 
@@ -19,10 +15,11 @@ Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-auto
 metrics from AWS CloudWatch.
 
 ## Prerequisites
+
 This adapter requires your node groups to have the following permissions to access metric data from Amazon CloudWatch.
 - `cloudwatch:GetMetricData`
 
-You can create an IAM policy using this template, and attach it to your node group role.
+You can create an IAM policy using this template and attach it to your node group role.
 
 ```json
 {
@@ -40,6 +37,7 @@ You can create an IAM policy using this template, and attach it to your node gro
 ```
 
 ## Deploy
+
 Requires a Kubernetes cluster with 
 [Metric Server deployed](https://docs.aws.amazon.com/eks/latest/userguide/metrics-server.html).
 
@@ -65,7 +63,10 @@ REVISION: 1
 TEST SUITE: None
 ```
 
+> **NOTE:** A Helm chart repository will soon be available, eliminating the need to clone the Git repository.
+
 ### Verifying the deployment
+
 Next you can query the APIs to see if the adapter is deployed correctly by running:
 
 ```bash
@@ -79,17 +80,22 @@ $ kubectl get --raw "/apis/external.metrics.k8s.io/v1beta1" | jq .
 }
 ```
 
-## Deploying the sample application
-There is a sample SQS application provided in this repository for you to test how the adapter works.
-Refer to this [guide](samples/sqs/README.md).
+## Deploying the Sample Application
 
-## More docs
+There is a sample SQS application provided in this repository for you to test how the adapter works. Refer to this 
+[guide](samples/sqs/README.md).
+
+## Further Reading
+
 - [Configuring cross account metric example](docs/cross-account.md)
 - [ExternalMetric CRD schema](docs/schema.md)
 
 ## License
 
-This library is licensed under the Apache 2.0 License.
+This library is licensed under the Apache 2.0 License. [Contributions](CONTRIBUTING.md) are welcomed!
 
 ## Issues
-Report any issues in the [Github Issues](https://github.com/awslabs/k8s-cloudwatch-adapter/issues)
+
+Report any non-security issues in the [Github Issue Tracker](https://github.com/actzeroai/k8s-cloudwatch-adapter/issues). 
+
+Please see [CONTRIBUTING.md](CONTRIBUTING.md#security-issue-notifications) for information on reporting security issues.

@@ -1,4 +1,4 @@
-REGISTRY?=chankh
+REGISTRY?=ghcr.io/actzeroai
 IMAGE?=k8s-cloudwatch-adapter
 TEMP_DIR:=$(shell mktemp -d /tmp/$(IMAGE).XXXXXX)
 ARCH?=amd64
@@ -21,7 +21,7 @@ $(OUT_DIR)/%/adapter: $(SRC)
 docker-build: verify-apis test
 	cp deploy/Dockerfile $(TEMP_DIR)/Dockerfile
 
-	docker run --rm -v $(TEMP_DIR):/build -v $(shell pwd):/go/src/github.com/awslabs/k8s-cloudwatch-adapter -e GOARCH=$(ARCH) -e GOFLAGS="$(GOFLAGS)" -w /go/src/github.com/awslabs/k8s-cloudwatch-adapter $(GOIMAGE) /bin/bash -c "\
+	docker run --rm -v $(TEMP_DIR):/build -v $(shell pwd):/go/src/github.com/actzeroai/k8s-cloudwatch-adapter -e GOARCH=$(ARCH) -e GOFLAGS="$(GOFLAGS)" -w /go/src/github.com/awslabs/k8s-cloudwatch-adapter $(GOIMAGE) /bin/bash -c "\
 		CGO_ENABLED=0 GO111MODULE=on go build -o /build/adapter cmd/adapter/adapter.go"
 
 	docker build -t $(REGISTRY)/$(IMAGE):$(VERSION) $(TEMP_DIR)
