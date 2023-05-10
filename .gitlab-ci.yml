@@ -9,22 +9,22 @@ stages:
 container_test:
   stage: test
   image: golang:1.14-alpine
-  script:
-    - CGO_ENABLED=0 GO111MODULE=on go test -cover ./pkg/...
   rules:
     - if: $CI_PIPELINE_SOURCE == "external_pull_request_event"
+  script:
+    - CGO_ENABLED=0 GO111MODULE=on go test -cover ./pkg/...
 
 helm_lint:
   stage: test
   image: alpine/helm:3.11.3
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "external_pull_request_event"
   parallel:
     matrix:
       - CHART: ./charts/k8s-cloudwatch-adapter
       - CHART: ./charts/k8s-cloudwatch-adapter-crd
   script:
     - helm lint $CHART
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "external_pull_request_event"
 
 container_build:
   image: public.ecr.aws/docker/library/docker:20.10
@@ -63,9 +63,14 @@ helm_chart_build:
   stage: build
   variables:
     HELM_REPO: https://gitlab.com/api/v4/projects/45916012/packages/helm/stable
+    CHART_PATH: ./charts
   rules:
     - if: $CI_PIPELINE_SOURCE == "external_pull_request_event" # Temporary
+  parallel:
+    matrix:
+      - CHART: k8s-cloudwatch-adapter
+      - CHART: k8s-cloudwatch-adapter-crd
   script:
-    - helm package ./charts/k8s-cloudwatch-adapter
+    - helm package $CHART_PATH/$CHART
     - helm repo add --username $HELM_USER --password $HELM_TOKEN k8s-cloudwatch-adapter $HELM_REPO
-#    - helm cm-push
+    - helm cm-push $CHART-*.tgz k8s-cloudwatch-adapter
