@@ -65,7 +65,7 @@ helm_chart_build:
     HELM_API: https://gitlab.com/api/v4/projects/45916012/packages/helm/api/stable/charts
     CHART_PATH: ./charts
   rules:
-    - if: $CI_PIPELINE_SOURCE == "external_pull_request_event" # Temporary
+    - if: $CI_COMMIT_TAG
   parallel:
     matrix:
       - CHART: k8s-cloudwatch-adapter
