@@ -14,6 +14,16 @@ container_test:
   rules:
     - if: $CI_PIPELINE_SOURCE == "external_pull_request_event"
 
+helm_lint:
+  stage: test
+  image: alpine/helm:3.11.3
+  parallel:
+    matrix:
+      - CHART: ./charts/k8s-cloudwatch-adapter
+      - CHART: ./charts/k8s-cloudwatch-adapter-crd
+  script:
+    - helm lint $CHART
+
 container_build:
   image: public.ecr.aws/docker/library/docker:20.10
   stage: build
@@ -47,7 +57,7 @@ consumer_build:
     - docker push $TAG
 
 helm_chart_build:
-  image: apline/helm:3.11.3
+  image: alpine/helm:3.11.3
   stage: build
   variables:
     HELM_REPO: https://gitlab.com/api/v4/projects/45916012/packages/helm/stable
