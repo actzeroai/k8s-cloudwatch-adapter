@@ -1,3 +1,7 @@
+default:
+  tags:
+    - kubernetes
+
 stages:
   - test
   - build
@@ -5,10 +9,68 @@ stages:
 container_test:
   stage: test
   image: golang:1.14-alpine
-  variables:
-    CGO_ENABLED: 0
-    GO111MODULE: on
-  script:
-    - go test -cover ./pkg/...
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == "external_pull_request_event"
+  script:
+    - CGO_ENABLED=0 GO111MODULE=on go test -cover ./pkg/...
+
+helm_lint:
+  stage: test
+  image: alpine/helm:3.11.3
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "external_pull_request_event"
+  parallel:
+    matrix:
+      - CHART: ./charts/k8s-cloudwatch-adapter
+      - CHART: ./charts/k8s-cloudwatch-adapter-crd
+  script:
+    - helm lint $CHART
+
+container_build:
+  image: public.ecr.aws/docker/library/docker:20.10
+  stage: build
+  variables:
+    IMAGE: ghcr.io/actzeroai/k8s-cloudwatch-adapter
+    TAG: $IMAGE:latest
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG
+      variables:
+        TAG: $IMAGE:$CI_COMMIT_TAG
+  script:
+    - docker build -t $TAG .
+    - echo $GHCR_TOKEN | docker login ghcr.io -u $GHCR_USER --password-stdin
+    - docker push $TAG
+
+consumer_build:
+  image: public.ecr.aws/docker/library/docker:20.10
+  stage: build
+  variables:
+    TAG: ghcr.io/actzeroai/k8s-cloudwatch-adapter:sqs-consumer-sample
+  only:
+    refs:
+      - main
+    changes:
+      - samples/sqs/consumer/**/*
+  script:
+    - cd samples/sqs/consumer
+    - docker build -t $TAG .
+    - echo $GHCR_TOKEN | docker login ghcr.io -u $GHCR_USER --password-stdin
+    - docker push $TAG
+
+helm_chart_build:
+  image: alpine/helm:3.11.3
+  stage: build
+  variables:
+    HELM_API: https://gitlab.com/api/v4/projects/45916012/packages/helm/api/stable/charts
+    CHART_PATH: ./charts
+  rules:
+    - if: $CI_COMMIT_TAG
+  parallel:
+    matrix:
+      - CHART: k8s-cloudwatch-adapter
+      - CHART: k8s-cloudwatch-adapter-crd
+  script:
+    - helm package $CHART_PATH/$CHART
+    - export CHART_PKG=$(ls $CHART-*.tgz)
+    - 'curl --request POST --user $HELM_USER:$HELM_TOKEN --form "chart=@${CHART_PKG}" "${HELM_API}"'

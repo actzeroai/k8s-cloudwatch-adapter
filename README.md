@@ -45,7 +45,8 @@ Now, deploy the [CRD](https://kubernetes.io/docs/concepts/extend-kubernetes/api-
 using the Helm charts in the `/charts` directory:
 
 ```bash
-$ helm install k8s-cloudwatch-adapter-crd ./charts/k8s-cloudwatch-adapter-crd \
+$ helm repo add k8s-cloudwatch-adapter https://gitlab.com/api/v4/projects/45916012/packages/helm/stable
+$ helm install k8s-cloudwatch-adapter-crd .k8s-cloudwatch-adapter/k8s-cloudwatch-adapter-crd \
 >   --namespace custom-metrics \
 >   --create-namespace
 NAME: k8s-cloudwatch-adapter-crd
@@ -54,7 +55,7 @@ NAMESPACE: default
 STATUS: deployed
 REVISION: 1
 TEST SUITE: None
-$ helm install k8s-cloudwatch-adapter ./charts/k8s-cloudwatch-adapter --namespace custom-metrics
+$ helm install k8s-cloudwatch-adapter k8s-cloudwatch-adapter/k8s-cloudwatch-adapter --namespace custom-metrics
 NAME: k8s-cloudwatch-adapter
 LAST DEPLOYED: Mon May 8 13:20:17 2023
 NAMESPACE: custom-metrics
@@ -62,8 +63,6 @@ STATUS: deployed
 REVISION: 1
 TEST SUITE: None
 ```
-
-> **NOTE:** A Helm chart repository will soon be available, eliminating the need to clone the Git repository.
 
 ### Verifying the deployment
 
