@@ -23,6 +23,8 @@ helm_lint:
       - CHART: ./charts/k8s-cloudwatch-adapter-crd
   script:
     - helm lint $CHART
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "external_pull_request_event"
 
 container_build:
   image: public.ecr.aws/docker/library/docker:20.10
