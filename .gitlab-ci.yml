@@ -11,5 +11,5 @@ container_test:
   image: golang:1.14-alpine
   script:
     - CGO_ENABLED=0 GO111MODULE=on go test -cover ./pkg/...
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  only:
+    - external_pull_requests
