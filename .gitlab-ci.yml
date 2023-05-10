@@ -73,4 +73,4 @@ helm_chart_build:
   script:
     - helm package $CHART_PATH/$CHART
     - helm repo add --username $HELM_USER --password $HELM_TOKEN k8s-cloudwatch-adapter $HELM_REPO
-    - helm cm-push $CHART-*.tgz k8s-cloudwatch-adapter
+    - helm push $CHART-*.tgz k8s-cloudwatch-adapter
