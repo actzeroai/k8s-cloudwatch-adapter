@@ -14,3 +14,33 @@ container_test:
   rules:
     - if: $CI_PIPELINE_SOURCE == "external_pull_request_event"
 
+container_build:
+  image: public.ecr.aws/docker/library/docker:20.10
+  stage: build
+  variables:
+    IMAGE: ghcr.io/actzeroai/k8s-cloudwatch-adapter
+    TAG: $IMAGE:latest
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG
+      variables:
+        TAG: $IMAGE:$CI_COMMIT_TAG
+  script:
+    - docker build -t $TAG .
+    - echo $GHCR_TOKEN | docker login ghcr.io -u $GHCR_USER --password-stdin
+    - docker push $TAG
+
+consumer_build:
+  image: public.ecr.aws/docker/library/docker:20.10
+  stage: build
+  variables:
+    TAG: ghcr.io/actzeroai/k8s-cloudwatch-adapter:sqs-consumer-sample
+  only:
+    refs:
+      - main
+    changes:
+      - samples/sqs/consumer/**/*
+  script:
+    - docker build -t $TAG .
+    - echo $GHCR_TOKEN | docker login ghcr.io -u $GHCR_USER --password-stdin
+    - docker push $TAG
