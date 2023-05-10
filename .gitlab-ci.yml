@@ -62,7 +62,7 @@ helm_chart_build:
   image: alpine/helm:3.11.3
   stage: build
   variables:
-    HELM_REPO: https://gitlab.com/api/v4/projects/45916012/packages/helm/stable
+    HELM_API: https://gitlab.com/api/v4/projects/45916012/packages/helm/api/stable/charts
     CHART_PATH: ./charts
   rules:
     - if: $CI_PIPELINE_SOURCE == "external_pull_request_event" # Temporary
@@ -72,5 +72,5 @@ helm_chart_build:
       - CHART: k8s-cloudwatch-adapter-crd
   script:
     - helm package $CHART_PATH/$CHART
-    - helm repo add --username $HELM_USER --password $HELM_TOKEN k8s-cloudwatch-adapter $HELM_REPO
-    - helm push $CHART-*.tgz k8s-cloudwatch-adapter
+    - export CHART_PKG=$(ls $CHART-*.tgz)
+    - 'curl --request POST --user $HELM_USER:$HELM_TOKEN --form "chart=@${CHART_PKG}" "${HELM_API}"'
