@@ -45,3 +45,15 @@ consumer_build:
     - docker build -t $TAG .
     - echo $GHCR_TOKEN | docker login ghcr.io -u $GHCR_USER --password-stdin
     - docker push $TAG
+
+helm_chart_build:
+  image: apline/helm:3.11.3
+  stage: build
+  variables:
+    HELM_REPO: https://gitlab.com/api/v4/projects/45916012/packages/helm/stable
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "external_pull_request_event" # Temporary
+  script:
+    - helm package ./charts/k8s-cloudwatch-adapter
+    - helm repo add --username $HELM_USER --password $HELM_TOKEN k8s-cloudwatch-adapter $HELM_REPO
+#    - helm cm-push
