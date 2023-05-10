@@ -41,6 +41,7 @@ consumer_build:
     changes:
       - samples/sqs/consumer/**/*
   script:
+    - cd samples/sqs/consumer
     - docker build -t $TAG .
     - echo $GHCR_TOKEN | docker login ghcr.io -u $GHCR_USER --password-stdin
     - docker push $TAG
