@@ -1,10 +1,9 @@
 name: Build Helm Charts
 
 on:
-  - pull_request
-#  release:
-#    types:
-#      - published
+  release:
+    types:
+      - published
 
 env:
   HELM_API: https://gitlab.com/api/v4/projects/45916012/packages/helm/api/stable/charts
@@ -36,4 +35,3 @@ jobs:
 
       - name: Upload Package
         run: curl --request POST --user ${{ secrets.HELM_USER }}:${{ secrets.HELM_TOKEN }} --form "chart=@${{ env.chart_tarball }}" "${{ env.HELM_API }}"
-    
