@@ -1,4 +1,4 @@
-name: Build and Push Adapter Container
+name: Build and Push Consumer Container
 
 on:
   push:
