@@ -1,0 +1,40 @@
+name: Build and Push Adapter Container
+
+on:
+  - pull_request
+#  release:
+#    types:
+#      - published
+#  push:
+#    branches:
+#      - 'main'
+
+jobs:
+  publish_latest_image:
+    name: Build and Push Latest Image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GHCR_USERNAME }}
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Set Tag
+        id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ghcr.io/actzeroai/k8s-cloudwatch-adapter
+        tags: |
+          type=raw,value=latest
+
+      - name: Build and Push Image
+        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
