@@ -35,5 +35,5 @@ jobs:
         run: echo "chart_tarball=$(ls ${{ matrix.chart }}-*.tgz)" >> "$GITHUB_ENV"
 
       - name: Upload Package
-        run: curl --request POST --user ${{ secret.HELM_USER }}:${{ secret.HELM_TOKEN }} --form "chart=@${{ env.chart_tarball }}" "${{ env.HELM_API }}"
+        run: curl --request POST --user ${{ secrets.HELM_USER }}:${{ secrets.HELM_TOKEN }} --form "chart=@${{ env.chart_tarball }}" "${{ env.HELM_API }}"
     
