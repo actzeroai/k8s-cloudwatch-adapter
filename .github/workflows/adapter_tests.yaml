@@ -4,17 +4,18 @@ on:
   - pull_request
 
 jobs:
+  test:
 
-  runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-  steps:
+    steps:
 
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Set Up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: '1.14'
+      - name: Set Up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.14'
 
-    - name: Test
-      run: CGO_ENABLED=0 GO111MODULE=on go test -cover ./pkg/...
+      - name: Test
+        run: CGO_ENABLED=0 GO111MODULE=on go test -cover ./pkg/...
