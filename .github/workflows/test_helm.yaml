@@ -1,0 +1,25 @@
+name: Test Helm Charts
+
+on:
+  - pull_request
+
+jobs:
+
+  lint:
+
+    strategy:
+      matrix:
+        chart:
+          - ./charts/k8s-cloudwatch-adapter
+          - ./charts/k8s-cloudwatch-adapter-crd
+
+    runs-on: ubuntu-latest
+
+    container:
+      image: alpine/helm:3.11.3
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run Linter
+        run: helm lint ${{ matrix.chart }}
