@@ -1,7 +1,7 @@
 name: Build Helm Charts
 
 on:
-  - merge_request
+  - pull_request
 #  release:
 #    types:
 #      - published
@@ -36,3 +36,4 @@ jobs:
 
       - name: Upload Package
         run: curl --request POST --user ${{ secret.HELM_USER }}:${{ secret.HELM_TOKEN }} --form "chart=@${{ env.chart_tarball }}" "${{ env.HELM_API }}"
+    
