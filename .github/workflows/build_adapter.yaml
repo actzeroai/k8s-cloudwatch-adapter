@@ -1,13 +1,12 @@
 name: Build and Push Adapter Container
 
 on:
-  - pull_request
-#  release:
-#    types:
-#      - published
-#  push:
-#    branches:
-#      - 'main'
+  release:
+    types:
+      - published
+  push:
+    branches:
+      - 'main'
 
 jobs:
   publish_latest_image:
@@ -39,7 +38,8 @@ jobs:
         with:
           images: ghcr.io/actzeroai/k8s-cloudwatch-adapter
           tags: |
-            type=raw,value=latest
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=ref,event=tag
 
       - name: Build and Push Image
         uses: docker/build-push-action@v4
@@ -48,4 +48,3 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
