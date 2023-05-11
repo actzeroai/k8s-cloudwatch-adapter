@@ -1,0 +1,38 @@
+name: Build Helm Charts
+
+on:
+  - merge_request
+#  release:
+#    types:
+#      - published
+
+env:
+  HELM_API: https://gitlab.com/api/v4/projects/45916012/packages/helm/api/stable/charts
+  CHART_PATH: ./charts
+
+jobs:
+
+  build:
+
+    strategy:
+      matrix:
+        chart:
+          - k8s-cloudwatch-adapter
+          - k8s-cloudwatch-adapter-crd
+
+    runs-on: ubuntu-latest
+
+    container:
+      image: alpine/helm:3.11.3
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Package Chart
+        run: helm package ${{ env.CHART_PATH }}/${{ matrix.chart }}
+
+      - name: Get Package Filename
+        run: echo "chart_tarball=$(ls ${{ matrix.chart }}-*.tgz)" >> "$GITHUB_ENV"
+
+      - name: Upload Package
+        run: curl --request POST --user ${{ secret.HELM_USER }}:${{ secret.HELM_TOKEN }} --form "chart=@${{ env.chart_tarball }}" "${{ env.HELM_API }}"
